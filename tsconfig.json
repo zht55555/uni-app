@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "sourceMap": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
@@ -12,6 +13,7 @@
       "@dcloudio/types",
       "miniprogram-api-typings",
       "@uni-helper/uni-app-types",
+      "@uni-helper/uni-ui-types",
       "@uni-helper/uni-ui-types"
     ]
   },
