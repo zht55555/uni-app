@@ -1,5 +1,5 @@
 import { http } from '@/utils/request'
-import type { HomeBannerResponse } from '@/types/home'
+import type { HomeBannerResponse, HomeCategoryResponse } from '@/types/home'
 
 export const getHomeBanner = (distributionSite: number) => {
   return http<HomeBannerResponse[]>({
@@ -8,5 +8,12 @@ export const getHomeBanner = (distributionSite: number) => {
     data: {
       distributionSite,
     },
+  })
+}
+
+export const getHomeCategory = () => {
+  return http<HomeCategoryResponse[]>({
+    url: '/home/category/mutli',
+    method: 'GET',
   })
 }
