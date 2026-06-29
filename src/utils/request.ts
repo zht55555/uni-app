@@ -26,14 +26,14 @@ uni.addInterceptor('uploadFile', httpInterceptor)
 interface HttpResponse<T> {
   code: number
   msg: string
-  data: T
+  result: T
 }
 export const http = <T>(options: UniApp.RequestOptions) => {
   return new Promise<HttpResponse<T>>((resolve, reject) => {
     uni.request({
       ...options,
       success: (res) => {
-        if (res.statusCode < 200 || res.statusCode >= 300) {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data as HttpResponse<T>)
         } else if (res.statusCode === 401) {
           const memberStore = useMemberStore()
