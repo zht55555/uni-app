@@ -4,9 +4,10 @@ import { onLoad } from '@dcloudio/uni-app'
 import { getHomeBanner, getHomeCategory, getHomeHot, getHomeGoodsGuessLike } from '@/services/home'
 import CustomNavbar from './_components/CustomNavbar.vue'
 import ZhtSwiper from '@/components/ZhtSwiper.vue'
-import HotPanel from '@/components/HotPanel.vue'
 import Guess from '@/components/Guess.vue'
 import CategoryPanel from './_components/CategoryPanel.vue'
+import HotPanel from './_components/HotPanel.vue'
+import PageSkeleton from './_components/PageSkeleton.vue'
 import type { HomeBannerResponse, HomeCategoryResponse, HotResponse } from '@/types/home'
 import type { GuessInstance } from '@/types/component'
 
@@ -15,6 +16,7 @@ const homeCategoryData = ref<HomeCategoryResponse[]>([])
 const homeHotData = ref<HotResponse[]>([])
 const guessComponentRef = ref<GuessInstance | null>(null)
 const refresherTriggered = ref(false)
+const isLoading = ref(true)
 
 const getHomeHotData = async () => {
   try {
@@ -59,9 +61,9 @@ const onRefresherRefresh = async () => {
   })
 }
 onLoad(() => {
-  getHomeBannerData(1)
-  getHomeCategoryData()
-  getHomeHotData()
+  Promise.all([getHomeBannerData(1), getHomeCategoryData(), getHomeHotData()]).finally(() => {
+    isLoading.value = false
+  })
 })
 </script>
 
@@ -75,10 +77,13 @@ onLoad(() => {
     @refresherrefresh="onRefresherRefresh"
     :refresher-triggered="refresherTriggered"
   >
-    <ZhtSwiper :list="homeBannerData" />
-    <CategoryPanel :list="homeCategoryData" />
-    <HotPanel :list="homeHotData" />
-    <Guess ref="guessComponentRef" />
+    <PageSkeleton v-if="isLoading" />
+    <template v-else>
+      <ZhtSwiper :list="homeBannerData" />
+      <CategoryPanel :list="homeCategoryData" />
+      <HotPanel :list="homeHotData" />
+      <Guess ref="guessComponentRef" />
+    </template>
   </scroll-view>
 </template>
 
