@@ -4,12 +4,10 @@ import { http } from '@/utils/request'
 
 const memberStore = useMemberStore()
 const getData = async () => {
-  console.log('getData')
   const res = await http({
     method: 'GET',
     url: '/home/banner',
   })
-  console.log('res', res)
 }
 </script>
 

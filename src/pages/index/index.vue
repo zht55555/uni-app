@@ -1,21 +1,32 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { getHomeBanner, getHomeCategory } from '@/services/home'
+import { getHomeBanner, getHomeCategory, getHomeHot } from '@/services/home'
 import CustomNavbar from './_components/CustomNavbar.vue'
 import ZhtSwiper from '@/components/ZhtSwiper.vue'
+import HotPanel from '@/components/HotPanel.vue'
 import CategoryPanel from './_components/CategoryPanel.vue'
-import type { HomeBannerResponse, HomeCategoryResponse } from '@/types/home'
+
+import type { HomeBannerResponse, HomeCategoryResponse, HotResponse } from '@/types/home'
 
 const homeBannerData = ref<HomeBannerResponse[]>([])
 const homeCategoryData = ref<HomeCategoryResponse[]>([])
+const homeHotData = ref<HotResponse[]>([])
+const getHomeHotData = async () => {
+  try {
+    const res = await getHomeHot()
+    console.log('homeHotData', res.result)
+
+    homeHotData.value = res.result
+  } catch (error) {
+    homeHotData.value = []
+  }
+}
 const getHomeBannerData = async (distributionSite: number) => {
   try {
     const res = await getHomeBanner(distributionSite)
-    console.log('res', res)
     homeBannerData.value = res.result
   } catch (error) {
-    console.error('获取轮播图失败:', error)
     homeBannerData.value = []
   }
 }
@@ -31,6 +42,7 @@ const getHomeCategoryData = async () => {
 onLoad(() => {
   getHomeBannerData(1)
   getHomeCategoryData()
+  getHomeHotData()
 })
 </script>
 
@@ -38,6 +50,7 @@ onLoad(() => {
   <CustomNavbar />
   <ZhtSwiper :list="homeBannerData" />
   <CategoryPanel :list="homeCategoryData" />
+  <HotPanel :list="homeHotData" />
 </template>
 
 <style lang="scss">
