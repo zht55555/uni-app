@@ -14,6 +14,7 @@ const homeBannerData = ref<HomeBannerResponse[]>([])
 const homeCategoryData = ref<HomeCategoryResponse[]>([])
 const homeHotData = ref<HotResponse[]>([])
 const guessComponentRef = ref<GuessInstance | null>(null)
+const refresherTriggered = ref(false)
 
 const getHomeHotData = async () => {
   try {
@@ -45,6 +46,18 @@ const onScrollToLower = () => {
     guessComponentRef.value.getMore()
   }
 }
+const onRefresherRefresh = async () => {
+  guessComponentRef.value?.resetPageParams()
+  refresherTriggered.value = true
+  Promise.all([
+    getHomeBannerData(1),
+    getHomeCategoryData(),
+    getHomeHotData(),
+    guessComponentRef.value?.getMore(),
+  ]).finally(() => {
+    refresherTriggered.value = false
+  })
+}
 onLoad(() => {
   getHomeBannerData(1)
   getHomeCategoryData()
@@ -54,7 +67,14 @@ onLoad(() => {
 
 <template>
   <CustomNavbar />
-  <scroll-view scroll-y class="scroll-view" @scrolltolower="onScrollToLower">
+  <scroll-view
+    scroll-y
+    class="scroll-view"
+    @scrolltolower="onScrollToLower"
+    refresher-enabled
+    @refresherrefresh="onRefresherRefresh"
+    :refresher-triggered="refresherTriggered"
+  >
     <ZhtSwiper :list="homeBannerData" />
     <CategoryPanel :list="homeCategoryData" />
     <HotPanel :list="homeHotData" />

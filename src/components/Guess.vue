@@ -13,7 +13,11 @@ const pageParams = ref<Required<PageParams>>({
 })
 
 const list = ref<GoodsGuessLikeResponse[]>([])
-
+const resetPageParams = () => {
+  pageParams.value.page = 1
+  pageParams.value.pageSize = 10
+  list.value = []
+}
 const getHomeGoodsGuessLikeData = async () => {
   try {
     const res = await getHomeGoodsGuessLike(pageParams.value)
@@ -29,6 +33,7 @@ const getHomeGoodsGuessLikeData = async () => {
 
 defineExpose({
   getMore: getHomeGoodsGuessLikeData,
+  resetPageParams,
 })
 
 onLoad(() => {
